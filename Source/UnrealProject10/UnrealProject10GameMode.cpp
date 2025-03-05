@@ -8,7 +8,7 @@ AUnrealProject10GameMode::AUnrealProject10GameMode()
 	: Super()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/ShootFunction/BluePrint/Pawn/BP_MyPawn"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 }
