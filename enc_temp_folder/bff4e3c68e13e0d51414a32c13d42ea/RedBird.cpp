@@ -21,17 +21,16 @@ void ARedBird::BeginPlay()
 void ARedBird::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ARedBird::Init()
 {
-	BirdMass = 500.0f;
-	BirdVelocity = 1000.0f;
+
 }
 
 void ARedBird::TakeDamage(float DamageAmount)
 {
-	IBirds::TakeDamage(DamageAmount);
 }
 
 void ARedBird::OnDeath()
@@ -40,20 +39,21 @@ void ARedBird::OnDeath()
 
 float ARedBird::GetBirdVelocity() const
 {
-	return BirdVelocity;
+	return IBirds::GetBirdVelocity();
 }
 
-void ARedBird::SetBirdVelocity(float NewBirdVelocity)
+float ARedBird::SetBirdVelocity(float NewBirdVelocity)
 {
-	BirdVelocity = NewBirdVelocity;
+	return IBirds::SetBirdVelocity(NewBirdVelocity);
 }
 
 float ARedBird::GetBirdMass() const
 {
-	return BirdMass;
+	return IBirds::GetBirdMass();
 }
 
-void ARedBird::SetBirdMass(float NewBirdMass)
+float ARedBird::SetBirdMass(float NewBirdMass)
 {
-	BirdMass = NewBirdMass;
+	return IBirds::SetBirdMass(NewBirdMass);
 }
+

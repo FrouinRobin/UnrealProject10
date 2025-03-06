@@ -17,23 +17,3 @@ void IBirds::TakeDamage(float DamageAmount)
 void IBirds::OnDeath()
 {
 }
-
-float IBirds::GetBirdVelocity() const
-{
-	return BirdVelocity;
-}
-
-float IBirds::SetBirdVelocity(float NewBirdVelocity)
-{
-	return BirdVelocity = NewBirdVelocity;
-}
-
-float IBirds::GetBirdMass() const
-{
-	return BirdMass;
-}
-
-float IBirds::SetBirdMass(float NewBirdMass)
-{
-	return BirdMass = NewBirdMass;
-}

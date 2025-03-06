@@ -22,9 +22,28 @@ class UNREALPROJECT10_API IBirds
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	float BirdMass;
+	float BirdVelocity;
+
+	UFUNCTION()
 	virtual void Init() = 0;
 
+	UFUNCTION()
 	virtual void TakeDamage(float DamageAmount) = 0;
 
+	UFUNCTION()
 	virtual void OnDeath() = 0;
+
+	UFUNCTION()
+	virtual float GetBirdVelocity() const = 0;
+
+	UFUNCTION()
+	virtual float SetBirdVelocity(float NewBirdVelocity) = 0;
+
+	UFUNCTION()
+	virtual float GetBirdMass() const = 0;
+
+	UFUNCTION()
+	virtual float SetBirdMass(float NewBirdMass) = 0;
 };

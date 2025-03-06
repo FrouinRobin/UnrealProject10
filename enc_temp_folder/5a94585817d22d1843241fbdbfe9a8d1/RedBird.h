@@ -20,9 +20,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float BirdMass;
-	float BirdVelocity;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -33,11 +30,11 @@ public:
 
 	virtual void OnDeath() override;
 
-	float GetBirdVelocity() const;
+	virtual float GetBirdVelocity() const override;
 
-	void SetBirdVelocity(float NewBirdVelocity);
+	virtual float SetBirdVelocity(float NewBirdVelocity) override;
 
-	float GetBirdMass() const;
+	virtual float GetBirdMass() const override;
 
-	void SetBirdMass(float NewBirdMass);
+	virtual float SetBirdMass(float NewBirdMass) override;
 };
