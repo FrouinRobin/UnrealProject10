@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Birds.generated.h"
+#include "Obstacles.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UBirds : public UInterface
+class UObstacles : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,16 +16,12 @@ class UBirds : public UInterface
 /**
  * 
  */
-class UNREALPROJECT10_API IBirds
+class UNREALPROJECT10_API IObstacles
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Init() = 0;
 
-	virtual void TakeDamage(float DamageAmount) = 0;
-
-	virtual void OnDeath() = 0;
-
+	virtual void OnHitByBird() = 0;
 };
