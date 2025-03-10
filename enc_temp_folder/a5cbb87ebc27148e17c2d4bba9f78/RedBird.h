@@ -51,7 +51,7 @@ public:
 
 	float GetBirdVelocity() const;
 
-	void SetBirdVelocity(float CurrentBirdMass, float SlightshotPullStrength);
+	void SetBirdVelocity(float BirdMass, float SlightshotPullStrength);
 
 	float GetBirdMass() const;
 

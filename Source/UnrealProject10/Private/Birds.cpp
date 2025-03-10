@@ -16,4 +16,11 @@ void IBirds::TakeDamage(float DamageAmount)
 
 void IBirds::OnDeath()
 {
+    AActor* Actor = Cast<AActor>(this);
+    if (Actor)
+    {
+        // Si c'est un acteur, appeler Destroy() pour le supprimer
+        Actor->Destroy();
+        UE_LOG(LogTemp, Warning, TEXT("Default function OnDeath called, Bird is destroyed"));
+    }
 }
