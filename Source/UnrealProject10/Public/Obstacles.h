@@ -24,4 +24,6 @@ class UNREALPROJECT10_API IObstacles
 public:
 
 	virtual void OnHitByBird() = 0;
+
+	virtual void OnHitByPig() = 0;
 };

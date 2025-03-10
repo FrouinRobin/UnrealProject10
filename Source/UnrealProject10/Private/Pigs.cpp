@@ -15,4 +15,11 @@ void IPigs::TakeDamage(float DamageAmount)
 
 void IPigs::OnDeath()
 {
+    AActor* PigActor = Cast<AActor>(this);
+    if (PigActor)
+    {
+        // Si c'est un acteur, appeler Destroy() pour le supprimer
+        PigActor->Destroy();
+        UE_LOG(LogTemp, Warning, TEXT("Default function OnDeath called, Pig is destroyed"));
+    }
 }

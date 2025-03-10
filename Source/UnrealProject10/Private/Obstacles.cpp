@@ -8,3 +8,7 @@
 void IObstacles::OnHitByBird()
 {
 }
+
+void IObstacles::OnHitByPig()
+{
+}
