@@ -29,7 +29,10 @@ class UNREALPROJECT10_API ASlingshotPawn : public ACharacter
 
     /** Existing Look Action (IA_Shoot) */
     UPROPERTY(EditAnywhere, Category = "Input")
-    UInputAction* IA_Look;
+    UInputAction* IA_LookOnX;
+
+    UPROPERTY(EditAnywhere, Category = "Input")
+    UInputAction* IA_LookOnY;
 
     UPROPERTY(EditAnywhere, Category = "ToIgnore")
     TArray<AActor*> ActorsToIgnore;
@@ -50,8 +53,14 @@ public:
     UFUNCTION(BlueprintCallable)
     void StartAiming();
 
+    UFUNCTION()
+    void AdjustProjectile(const FInputActionValue& Value);
+
     UFUNCTION(BlueprintCallable)
     void FireProjectile();
+
+    //UFUNCTION()
+    //void SpawnNewProjectile();
     // Aiming & Shooting
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
     bool bIsAiming;
