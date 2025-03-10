@@ -33,7 +33,7 @@ void ASlingshotPawn::BeginPlay()
     Super::BeginPlay();
 
     // Store the initial projectile location (so we can reset it)
-        InitialProjectileLocation = ProjectileMesh->GetComponentLocation();
+    InitialProjectileLocation = ProjectileMesh->GetComponentLocation();
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -47,6 +47,13 @@ void ASlingshotPawn::BeginPlay()
 void ASlingshotPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+    FVector Start = ProjectileMesh->GetComponentLocation();
+    FVector ForwardVector = ProjectileMesh->GetForwardVector();
+    FVector End = Start + (ForwardVector * 100.0f); // Extend the line length
+
+    DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.0f, 0, 2.0f);
+    // Increase pull strength over time
+    
 }
 
 // Input Setup
@@ -82,7 +89,7 @@ void ASlingshotPawn::Look(const FInputActionValue& Value)
         // Get current yaw rotation and clamp it
         FRotator CurrentRotation = GetActorRotation();
         float ClampedYaw = FMath::Clamp(CurrentRotation.Yaw, -45.0f, 45.0f);  // Constrain yaw to [-45°, 45°]
-        SetActorRotation(FRotator(CurrentRotation.Pitch, ClampedYaw, CurrentRotation.Roll));
+        this->SetActorRotation(FRotator(CurrentRotation.Pitch, ClampedYaw, CurrentRotation.Roll));
     }
     else
     {
@@ -101,12 +108,12 @@ void ASlingshotPawn::StartAiming()
     {
         // Increase pull strength over time
         float NewPullStrength = GetPullStrength();
-        NewPullStrength += GetWorld()->GetDeltaSeconds() * 500.f;
+        NewPullStrength += GetWorld()->GetDeltaSeconds() * 1000.f;
         SetPullStrength(NewPullStrength);
         UE_LOG(LogTemp, Warning, TEXT("Aiming - PullStrength: %f"), GetPullStrength());
 
         FPredictProjectilePathParams PathParams;
-        PathParams.StartLocation = ProjectileMesh->GetComponentLocation(); // Start from the camera position
+        PathParams.StartLocation = ProjectileMesh->GetComponentLocation() + ProjectileMesh->GetForwardVector() * 100.f; // Start from the camera position
         PathParams.LaunchVelocity = ProjectileMesh->GetForwardVector() * GetPullStrength(); // Example velocity
         PathParams.bTraceWithCollision = true;
         PathParams.ProjectileRadius = 5.0f;
@@ -129,7 +136,7 @@ void ASlingshotPawn::StartAiming()
                 DrawDebugSphere(GetWorld(), Point.Location, 5.0f, 12, FColor::Green, false);
             }
 
-            if (PathResult.HitResult.bBlockingHit) // Check if the projectile hit something
+            if (PathResult.HitResult.GetComponent() != ProjectileMesh && PathResult.HitResult.bBlockingHit) // Check if the projectile hit something
             {
                 DrawDebugSphere(GetWorld(), PathResult.HitResult.Location, 5.0f, 12, FColor::Red, false);
             }
@@ -153,13 +160,13 @@ void ASlingshotPawn::AdjustProjectile(const FInputActionValue& Value)
         float InputValue = Value.Get<float>();
 
         // Get current rotation of the projectile
-        FRotator CurrentRotation = ProjectileMesh->GetRelativeRotation();
+        FRotator CurrentRotation = ProjectileMesh->GetComponentRotation();
 
-        // Adjust pitch (Y-axis) based on input value
-        float NewPitch = FMath::Clamp(CurrentRotation.Pitch + InputValue, -180.0f, 180.0f);  // Clamping pitch to 0-90 degrees
+        // Adjust pitch (X-axis) based on input value
+        float NewPitch = FMath::Clamp(CurrentRotation.Pitch + InputValue, -45.0f, 45.0f);  // Clamping pitch to a reasonable range
 
-        // Set the new relative rotation for the projectile (no yaw changes, only pitch)
-        ProjectileMesh->SetRelativeRotation(FRotator(NewPitch, 0.0f, 0.0f));
+        // Set the new world rotation for the projectile (only change pitch)
+        ProjectileMesh->SetWorldRotation(FRotator(NewPitch, CurrentRotation.Yaw, 0.f)); // Adjust Pitch, keep Yaw and Roll as they are
 
         // Adjust position based on the input value (move only vertically along Z-axis)
         FVector NewPosition = ProjectileMesh->GetRelativeLocation();
@@ -168,7 +175,7 @@ void ASlingshotPawn::AdjustProjectile(const FInputActionValue& Value)
         NewPosition.Z -= InputValue * 10.0f;  // Vertical movement, multiply by factor to control the speed
 
         // Clamp position to keep it within reasonable bounds (adjust Z limits as necessary)
-        NewPosition.Z = FMath::Clamp(NewPosition.Z, -180.0f, 180.0f);  // Limit vertical position to a reasonable range
+        NewPosition.Z = FMath::Clamp(NewPosition.Z, -45.0f, 45.0f);  // Limit vertical position to a reasonable range
 
         // Set the new position for the projectile
         ProjectileMesh->SetRelativeLocation(NewPosition);
@@ -182,22 +189,54 @@ void ASlingshotPawn::FireProjectile()
     if (!bIsAiming) return;
 
     bIsAiming = false;
+    FPredictProjectilePathParams PathParams;
+    PathParams.StartLocation = ProjectileMesh->GetComponentLocation() + ProjectileMesh->GetForwardVector() * 100.f; // Start from the camera position
+    PathParams.LaunchVelocity = ProjectileMesh->GetForwardVector() * GetPullStrength(); // Example velocity
+    PathParams.bTraceWithCollision = true;
+    PathParams.ProjectileRadius = 5.0f;
+    PathParams.bTraceWithChannel = true;
+    PathParams.TraceChannel = ECC_Visibility;
+    PathParams.DrawDebugType = EDrawDebugTrace::ForDuration;
+    PathParams.SimFrequency = 25.f;
 
+    FPredictProjectilePathResult PathResult;
+    bool bSuccess = UGameplayStatics::PredictProjectilePath(GetWorld(), PathParams, PathResult);
+
+    if (bSuccess)
+    {
+        // Log the predicted path result
+        UE_LOG(LogTemp, Warning, TEXT("Predicted %d points in the path"), PathResult.PathData.Num());
+
+        // Draw the predicted path using debug spheres
+        for (const FPredictProjectilePathPointData& Point : PathResult.PathData)
+        {
+            DrawDebugSphere(GetWorld(), Point.Location, 5.0f, 12, FColor::Green, false, 10.f);
+        }
+
+        if (PathResult.HitResult.GetComponent() != ProjectileMesh && PathResult.HitResult.bBlockingHit) // Check if the projectile hit something
+        {
+            DrawDebugSphere(GetWorld(), PathResult.HitResult.Location, 5.0f, 12, FColor::Red, false, 10.f);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Projectile path prediction failed."));
+    }
     // Apply force to projectile
     FVector LaunchDirection = GetActorForwardVector(); // Adjust based on slingshot rotation
     ProjectileMesh->SetSimulatePhysics(true);
     ProjectileMesh->SetEnableGravity(true);
-    ProjectileMesh->AddImpulse(LaunchDirection * PullStrength, NAME_None, true);
-
-    // Reset projectile position after 2 seconds (optional)
-    FTimerHandle ResetTimer;
-    GetWorld()->GetTimerManager().SetTimer(ResetTimer, [this]()
-        {
-            ProjectileMesh->SetEnableGravity(false);
-            ProjectileMesh->SetWorldLocation(InitialProjectileLocation);
-            ProjectileMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
-        }, 2.0f, false);
-    SetPullStrength(0.0f);
+    ProjectileMesh->AddImpulse(PathParams.LaunchVelocity, NAME_None, true);
+    
+    //// Reset projectile position after 2 seconds (optional)
+    //FTimerHandle ResetTimer;
+    //GetWorld()->GetTimerManager().SetTimer(ResetTimer, [this]()
+    //    {
+    //        ProjectileMesh->SetEnableGravity(false);
+    //        ProjectileMesh->SetWorldLocation(InitialProjectileLocation);
+    //        ProjectileMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
+    //    }, 2.0f, false);
+    //SetPullStrength(0.0f);
 }
 
 

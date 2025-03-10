@@ -71,6 +71,8 @@ public:
 
     float GetPullStrength();
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+    UStaticMeshComponent* ProjectileMesh;
 
     void SetPullStrength(float NewStrength);
 private:
@@ -78,9 +80,7 @@ private:
     UPROPERTY(EditAnywhere, Category = "Components")
     USceneComponent* Anchor;
 
-    UPROPERTY(EditAnywhere, Category = "Components")
-    UStaticMeshComponent* ProjectileMesh;
-
+    
     UPROPERTY(EditAnywhere, Category = "Components")
     UCameraComponent* Camera;
 
