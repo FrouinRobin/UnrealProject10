@@ -34,6 +34,19 @@ void ADefaultPig::Tick(float DeltaTime)
 
 void ADefaultPig::Init()
 {
+	if (GetPigMass() == 0.0f)
+	{
+		SetPigMass(500.0f);
+	}
+	if (GetPigHealth() == 0.0f)
+	{
+		SetPigHealth(3.0f);
+	}
+	if (GetPigDamage() == 0.0f)
+	{
+		SetPigDamage(1.0f);
+	}
+
 	if (PigMaterial)
 	{
 		PigMesh->SetMaterial(0, PigMaterial);
@@ -81,17 +94,28 @@ void ADefaultPig::SetPigHealth(float NewPigHealth)
 	PigHealth = NewPigHealth;
 }
 
+float ADefaultPig::GetPigDamage() const
+{
+	return PigDamage;
+}
+
+void ADefaultPig::SetPigDamage(float NewPigDamage)
+{
+	PigDamage = NewPigDamage;
+}
+
 void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	//Gestion de l'impact avec un oiseau
-	if (Other && Other->Implements<UBirds>())
+	//Gestion de l'impact avec un cochon
+	if (Other && Other->Implements<UPigs>())
 	{
-		IBirds* Bird = Cast<IBirds>(Other);
-		if (Bird)
+		IPigs* Pig = Cast<IPigs>(Other);
+		if (Pig)
 		{
-			//this->TakeDamage(Bird->GetBirdDamage());
+			this->TakeDamage(GetPigDamage());
+			Pig->TakeDamage(GetPigDamage());
 		}
 	}
 	//Gestion de l'impact avec un obstacle
@@ -106,7 +130,7 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 	//Gestion de l'impact avec le sol
 	if (Other && Other->ActorHasTag("Ground"))
 	{
-
+		this->TakeDamage(GetPigDamage());
 	}
 }
 
