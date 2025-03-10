@@ -23,6 +23,8 @@ class UNREALPROJECT10_API IObstacles
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	virtual void Init() = 0;
+
 	virtual void OnHitByBird() = 0;
 
 	virtual void OnHitByPig() = 0;

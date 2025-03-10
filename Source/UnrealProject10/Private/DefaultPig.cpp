@@ -116,6 +116,7 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 		{
 			this->TakeDamage(GetPigDamage());
 			Pig->TakeDamage(GetPigDamage());
+			UE_LOG(LogTemp, Warning, TEXT("Pig : Collide with pig"));
 		}
 	}
 	//Gestion de l'impact avec un obstacle
@@ -125,12 +126,14 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 		if (Obstacle)
 		{
 			Obstacle->OnHitByPig();
+			UE_LOG(LogTemp, Warning, TEXT("Pig : Collide with obstacle"));
 		}
 	}
 	//Gestion de l'impact avec le sol
 	if (Other && Other->ActorHasTag("Ground"))
 	{
 		this->TakeDamage(GetPigDamage());
+		UE_LOG(LogTemp, Warning, TEXT("Pig : Collide with Ground"));
 	}
 }
 
