@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStaticsTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
+#include "RedBird.h"
 #include "SlingshotPawn.generated.h"
 
 class UInputAction;
@@ -37,31 +38,29 @@ class UNREALPROJECT10_API ASlingshotPawn : public ACharacter
     UPROPERTY(EditAnywhere, Category = "ToIgnore")
     TArray<AActor*> ActorsToIgnore;
 
-
+    UPROPERTY(EditAnywhere, Category = "AnchorProjectile")
+    USceneComponent* ProjectilAnchor;
 public:
     ASlingshotPawn();
 
 protected:
     virtual void BeginPlay() override;
 
+    void SpawnBird();
+
 public:
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-    UFUNCTION(BlueprintCallable)
-    void Look(const FInputActionValue& Value);
-    // Functions
+    UFUNCTION()
+    void AdjustYawRotation(const FInputActionValue& Value);
+    UFUNCTION()
+    void AdjustPitchRotation(const FInputActionValue& Value);
+
     UFUNCTION(BlueprintCallable)
     void StartAiming();
 
-    UFUNCTION()
-    void AdjustProjectile(const FInputActionValue& Value);
-
     UFUNCTION(BlueprintCallable)
     void FireProjectile();
-
-    //UFUNCTION()
-    //void SpawnNewProjectile();
-    // Aiming & Shooting
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
     bool bIsAiming;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
@@ -69,10 +68,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "Variables")
     FVector InitialProjectileLocation;
 
-    float GetPullStrength();
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bird")
+    ARedBird* LoadedBird;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-    UStaticMeshComponent* ProjectileMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bird")
+    TArray<TSubclassOf<ARedBird>> BirdList;
+
+    float GetPullStrength();
 
     void SetPullStrength(float NewStrength);
 private:
