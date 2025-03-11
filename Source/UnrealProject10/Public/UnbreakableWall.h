@@ -4,39 +4,31 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
 #include "Obstacles.h"
-#include "GeometryCollection/GeometryCollectionComponent.h"
-#include "Chaos/ChaosGameplayEventDispatcher.h"
-#include "DestructibleWall.generated.h"
+#include "UnbreakableWall.generated.h"
 
 UCLASS()
-class UNREALPROJECT10_API ADestructibleWall : public AActor, public IObstacles
+class UNREALPROJECT10_API AUnbreakableWall : public AActor, public IObstacles
 {
 	GENERATED_BODY()
+	
 protected:
 	// Composant de mesh pour l'apparence du cochon (déclaré mais pas défini ici)
-	//UPROPERTY(EditAnywhere, Category = "Wall Appearance")
-	//class UStaticMeshComponent* WallMesh;
+	UPROPERTY(EditAnywhere, Category = "Wall Appearance")
+	class UStaticMeshComponent* WallMesh;
 	UPROPERTY(EditAnywhere, Category = "Wall Appearance")
 	class UMaterialInterface* WallMaterial;
 
-	UPROPERTY(EditAnywhere, Category = "Wall Physics")
-	class UGeometryCollectionComponent* WallMesh;
-
-	UPROPERTY(EditAnywhere)
-	float WallMass;
-
 public:	
 	// Sets default values for this actor's properties
-	ADestructibleWall();
+	AUnbreakableWall();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every fra me
+	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Init() override;
@@ -45,7 +37,4 @@ public:
 
 	virtual void OnHitByPig() override;
 
-	float GetWallMass() const;
-
-	void SetWallMass(float NewWallMass);
 };

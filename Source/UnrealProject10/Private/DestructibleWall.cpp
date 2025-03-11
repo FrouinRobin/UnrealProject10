@@ -9,22 +9,14 @@ ADestructibleWall::ADestructibleWall()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//WallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallMesh"));
-	//RootComponent = WallMesh; // Définir le mesh comme root component
-	//
-	////Initiation des physics components
-	//WallMesh->SetSimulatePhysics(true);
-	//WallMesh->SetEnableGravity(true);
-	//WallMesh->SetNotifyRigidBodyCollision(true);
-
-	WallMesh2 = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("WallMesh2"));
-	RootComponent = WallMesh2;
+	WallMesh = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("WallMesh"));
+	RootComponent = WallMesh;
 
 	// Active la simulation physique et la destruction
-	WallMesh2->SetSimulatePhysics(true);
-	WallMesh2->SetEnableGravity(true);
-	WallMesh2->SetNotifyRigidBodyCollision(true);
-	WallMesh2->SetCollisionProfileName("PhysicsActor");
+	WallMesh->SetSimulatePhysics(true);
+	WallMesh->SetEnableGravity(true);
+	WallMesh->SetNotifyRigidBodyCollision(true);
+	WallMesh->SetCollisionProfileName("PhysicsActor");
 }
 
 // Called when the game starts or when spawned
@@ -44,28 +36,27 @@ void ADestructibleWall::Init()
 {
 	if (WallMaterial)
 	{
-		WallMesh2->SetMaterial(0, WallMaterial);
+		WallMesh->SetMaterial(0, WallMaterial);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WallMaterial non reference"));
+		UE_LOG(LogTemp, Warning, TEXT("Warning : WallMaterial undefined"));
 	}
 }
 
 void ADestructibleWall::OnHitByBird()
 {
-	if (WallMesh2)
+	if (WallMesh)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Wall hit by bird! Fracturing..."));
+		UE_LOG(LogTemp, Display, TEXT("Wall hit by bird! Fracturing..."));
 	}
 }
 
 void ADestructibleWall::OnHitByPig()
 {
-	//Destroy();
-	if (WallMesh2)
+	if (WallMesh)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Wall hit by pig! Fracturing..."));
+		UE_LOG(LogTemp, Display, TEXT("Wall hit by pig! Fracturing..."));
 	}
 }
 
