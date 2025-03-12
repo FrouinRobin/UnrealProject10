@@ -47,18 +47,18 @@ void ARedBird::Init()
 	if (GetBirdMass() == 0.0f)
 	{
 		SetBirdMass(500.0f);
-		UE_LOG(LogTemp, Warning, TEXT("Using default BirdMass"));
+		UE_LOG(LogTemp, Display, TEXT("Using default BirdMass"));
 	}
 	if (GetBirdVelocity() == 0.0f)
 	{
 		BirdVelocity = 1000.0f;
 		//SetBirdVelocity(GetBirdMass(), );
-		UE_LOG(LogTemp, Warning, TEXT("Using default BirdVelocity"));
+		UE_LOG(LogTemp, Display, TEXT("Using default BirdVelocity"));
 	}
 	if (GetBirdDamage() == 0.0f)
 	{
 		SetBirdDamage(10.0f);
-		UE_LOG(LogTemp, Warning, TEXT("Using default BirdDamage"));
+		UE_LOG(LogTemp, Display, TEXT("Using default BirdDamage"));
 
 	}
 	if (BirdMaterial)
@@ -67,7 +67,7 @@ void ARedBird::Init()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BirdMaterial non reference"));
+		UE_LOG(LogTemp, Warning, TEXT("Warning : BirdMaterial undefined"));
 	}
 
 	if (BirdMesh)
@@ -163,7 +163,7 @@ void ARedBird::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 	//Gestion de l'impact avec le sol
 	if (Other && Other->ActorHasTag("Ground"))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Collision avec le sol effectue"));
+		UE_LOG(LogTemp, Display, TEXT("Collision avec le sol effectue"));
 		if (GetBirdBounceCount() < GetBirdMaxBounceCount())
 		{
 			UPhysicalMaterial* PhysicsMat = BirdMesh->GetBodyInstance()->GetSimplePhysicalMaterial();
@@ -171,13 +171,13 @@ void ARedBird::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 			FVector BounceVelocity = FVector(CurrentVelocity.X, CurrentVelocity.Y, FMath::Abs(CurrentVelocity.Z) * PhysicsMat->Restitution);
 			BirdMesh->SetPhysicsLinearVelocity(BounceVelocity);
 			SetBirdBounceCount(GetBirdBounceCount() +1 );
-			UE_LOG(LogTemp, Warning, TEXT("Rebond effectue %i"), GetBirdBounceCount());
+			UE_LOG(LogTemp, Display, TEXT("Rebond effectue %i"), GetBirdBounceCount());
 		} 
 		else
 		{
 			BirdMesh->SetSimulatePhysics(false);
 			OnDeath();
-			UE_LOG(LogTemp, Warning, TEXT("Desactivation de la physique"));
+			UE_LOG(LogTemp, Display, TEXT("Desactivation de la physique"));
 		}
 	}
 }
