@@ -50,27 +50,24 @@ void ASlingshotPawn::SpawnBird()
 {
     if (BirdList.Num() > 0 && BirdList[0] != nullptr)
     {
-
         FActorSpawnParameters SpawnParams;
         SpawnParams.Owner = this;
         SpawnParams.Instigator = GetInstigator();
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-
         FVector SpawnLocation = ProjectilAnchor->GetComponentLocation();
-        FRotator SpawnRotation = FRotator::ZeroRotator;
-
+        FRotator SpawnRotation = GetActorRotation();  // Set initial rotation based on the pawn's rotation
 
         LoadedBird = GetWorld()->SpawnActor<ARedBird>(BirdList[0], SpawnLocation, SpawnRotation, SpawnParams);
         BirdList.RemoveAt(0);
+
         if (LoadedBird)
         {
             UE_LOG(LogTemp, Warning, TEXT("Successfully spawned LoadedBird at location: %s"), *SpawnLocation.ToString());
 
-
             LoadedBird->SetOwner(this);
             LoadedBird->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
+            LoadedBird->SetActorRotation(SpawnRotation); // Set initial bird rotation relative to the pawn's rotation
 
             UPrimitiveComponent* BirdRoot = Cast<UPrimitiveComponent>(LoadedBird->GetRootComponent());
             if (BirdRoot)
@@ -89,7 +86,6 @@ void ASlingshotPawn::SpawnBird()
     }
     AttachCable();
 }
-
 
 
 void ASlingshotPawn::Tick(float DeltaTime)
@@ -118,22 +114,20 @@ void ASlingshotPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     }
 }
 
+
+
 void ASlingshotPawn::AdjustYawRotation(const FInputActionValue& Value)
 {
     if (LoadedBird)
     {
-
         float InputValue = Value.Get<float>();
-
-
-        float SensitivityX = 0.2f;
-
-
+        float SensitivityX = 0.2f;  // Adjust sensitivity for yaw
+        FRotator actorRotation = this->GetActorRotation();
+        // Calculate the amount to rotate the bird around the pawn's up axis (Z)
         FRotator CurrentRotation = LoadedBird->GetActorRotation();
+        float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputValue * SensitivityX, actorRotation.Yaw - 45.0f, actorRotation.Yaw + 45.0f);
 
-
-        float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputValue * SensitivityX, -45.0f, 45.0f);
-
+        // Set the new rotation relative to the current pitch and roll of the bird
         LoadedBird->SetActorRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
     }
     else
@@ -146,17 +140,14 @@ void ASlingshotPawn::AdjustPitchRotation(const FInputActionValue& Value)
 {
     if (LoadedBird)
     {
-
         float InputValue = Value.Get<float>();
-
-
-        float SensitivityY = 0.5f;
-
+        float SensitivityY = 0.5f;  // Adjust sensitivity for pitch
+        FRotator actorRotation = this->GetActorRotation();
+        // Calculate the amount to rotate the bird around the pawn's right axis (X)
         FRotator CurrentRotation = LoadedBird->GetActorRotation();
+        float NewPitch = FMath::Clamp(CurrentRotation.Pitch + InputValue * SensitivityY, actorRotation.Pitch - 45.0f, actorRotation.Pitch + 45.0f);
 
-
-        float NewPitch = FMath::Clamp(CurrentRotation.Pitch + InputValue * SensitivityY, -45.0f, 45.0f);
-
+        // Set the new rotation relative to the current yaw and roll of the bird
         LoadedBird->SetActorRotation(FRotator(NewPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
     }
     else
