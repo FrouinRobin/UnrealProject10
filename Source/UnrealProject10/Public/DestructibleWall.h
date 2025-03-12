@@ -16,8 +16,6 @@ class UNREALPROJECT10_API ADestructibleWall : public AActor, public IObstacles
 	GENERATED_BODY()
 protected:
 	// Composant de mesh pour l'apparence du cochon (déclaré mais pas défini ici)
-	//UPROPERTY(EditAnywhere, Category = "Wall Appearance")
-	//class UStaticMeshComponent* WallMesh;
 	UPROPERTY(EditAnywhere, Category = "Wall Appearance")
 	class UMaterialInterface* WallMaterial;
 
