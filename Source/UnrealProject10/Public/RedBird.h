@@ -38,7 +38,6 @@ protected:
 	class UStaticMeshComponent* BirdMesh;
 	UPROPERTY(EditAnywhere, Category = "Bird Appearance")
 	class UMaterialInterface* BirdMaterial;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

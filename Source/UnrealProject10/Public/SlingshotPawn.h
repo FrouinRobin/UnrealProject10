@@ -38,8 +38,7 @@ class UNREALPROJECT10_API ASlingshotPawn : public ACharacter
     UPROPERTY(EditAnywhere, Category = "ToIgnore")
     TArray<AActor*> ActorsToIgnore;
 
-    UPROPERTY(EditAnywhere, Category = "AnchorProjectile")
-    USceneComponent* ProjectilAnchor;
+    
 public:
     ASlingshotPawn();
 
@@ -73,6 +72,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bird")
     TArray<TSubclassOf<ARedBird>> BirdList;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AnchorProjectile")
+    USceneComponent* ProjectilAnchor;
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void AttachCable();
 
     float GetPullStrength();
 
