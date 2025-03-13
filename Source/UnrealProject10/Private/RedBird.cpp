@@ -57,7 +57,7 @@ void ARedBird::Init()
 	}
 	if (GetBirdDamage() == 0.0f)
 	{
-		SetBirdDamage(10.0f);
+		SetBirdDamage(1.0f);
 		UE_LOG(LogTemp, Display, TEXT("Using default BirdDamage"));
 
 	}

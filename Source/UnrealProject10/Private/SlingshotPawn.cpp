@@ -274,11 +274,12 @@ void ASlingshotPawn::FireProjectile()
             SpawnBird();
         }, 2.0f, false);
     SetPullStrength(0.0f);
+    BirdImpulse = 0.0f;
 }
 
 
 float ASlingshotPawn::GetPullStrength()
-{
+{   
     return PullStrength;
 }
 

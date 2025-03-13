@@ -29,6 +29,11 @@ void ADefaultPig::BeginPlay()
 void ADefaultPig::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetPigHealth() <= 0)
+	{
+		OnDeath();
+	}
 }
 
 void ADefaultPig::Init()
