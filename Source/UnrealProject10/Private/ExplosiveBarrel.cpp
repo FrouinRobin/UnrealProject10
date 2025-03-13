@@ -2,6 +2,7 @@
 
 
 #include "ExplosiveBarrel.h"
+#include <Kismet/KismetSystemLibrary.h>
 
 // Sets default values
 AExplosiveBarrel::AExplosiveBarrel()
@@ -12,10 +13,9 @@ AExplosiveBarrel::AExplosiveBarrel()
 	BarrelMesh = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("BarrelMesh"));
 	RootComponent = BarrelMesh;
 
-	// Active la simulation physique et la destruction
-	//BarrelMesh->SetSimulatePhysics(true);
-	//BarrelMesh->SetEnableGravity(true);
-	//BarrelMesh->SetNotifyRigidBodyCollision(true);
+	FieldSystem = CreateDefaultSubobject<UFieldSystemComponent>(TEXT("FieldSystem"));
+	FieldSystem->SetupAttachment(RootComponent);
+
 	BarrelMesh->SetCollisionProfileName("PhysicsActor");
 }
 
@@ -37,11 +37,11 @@ void AExplosiveBarrel::Init()
 {
 	if (GetBarrelExplosionStrenght() == 0.0f)
 	{
-		SetBarrelExplosionStrenght(10000000.0f);
+		SetBarrelExplosionStrenght(1.0f);
 	}
 	if (GetBarrelExplosionRadius() == 0.0f)
 	{
-		SetBarrelExplosionRadius(1000.0f);
+		SetBarrelExplosionRadius(1.0f);
 	}
 
 	if (BarrelMaterial)
@@ -52,12 +52,12 @@ void AExplosiveBarrel::Init()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Warning : BarrelMaterial undefined"));
 	}
-	//Explode(GetBarrelExplosionStrenght(), GetBarrelExplosionRadius());
-	//BarrelMesh->ApplyRadialImpulse(GetActorLocation(), 5000.0f, 200.0f, ERadialImpulseFalloff::RIF_Linear, true);
 }
 
 void AExplosiveBarrel::OnHitByBird()
 {
+	UE_LOG(LogTemp, Display, TEXT("ExplosiveBarrel: Hit by bird, exploding"));
+
 	Explode(GetBarrelExplosionStrenght(), GetBarrelExplosionRadius());
 }
 
@@ -70,25 +70,26 @@ void AExplosiveBarrel::OnHitByPig()
 
 void AExplosiveBarrel::Explode(float ExplosionStrength, float ExplosionRadius)
 {
-	UFieldSystemComponent* FieldSystem = NewObject<UFieldSystemComponent>(BarrelMesh->GetOwner());
-	if (FieldSystem)
-	{
-		FieldSystem->RegisterComponent();
-		//BarrelMesh->AddFieldCommand(true, FieldSystem); 
+	// Création d’un Radial Vector Field pour appliquer une force d’explosion
+	URadialVector* RadialVector = NewObject<URadialVector>();
+	RadialVector->Magnitude = ExplosionStrength;  // Force de l'explosion
+	RadialVector->Position = GetActorLocation();
 	
-		URadialFalloff* RadialFalloff = NewObject<URadialFalloff>();
-		RadialFalloff->Magnitude = ExplosionStrength;
-		RadialFalloff->MinRange = 0.0f;
-		RadialFalloff->MaxRange = ExplosionRadius;
-		RadialFalloff->Default = 1.0f;
-		RadialFalloff->Radius = ExplosionRadius;
-		RadialFalloff->Position = GetActorLocation();
-	
-		//UChaosDestruction* ChaosDestruction = NewObject<UChaosDestruction>(); 
-		//ChaosDestruction->AddFieldCommand(EFieldPhysicsType::Field_ExternalClusterStrain, RadialFalloff);
-	
-		BarrelMesh->ApplyPhysicsField(true, EGeometryCollectionPhysicsTypeEnum::Chaos_ExternalClusterStrain, nullptr, RadialFalloff);
-	}
+	//Création d'un Radial Fall Off pour atténuer la force de l'explosion
+	URadialFalloff* RadialFalloff = NewObject<URadialFalloff>();
+	RadialFalloff->Magnitude = ExplosionStrength;
+	RadialFalloff->Radius = ExplosionRadius;
+	RadialFalloff->Position = GetActorLocation();
+	//RadialFalloff->Falloff = EFieldFalloffType::Field_Falloff_Linear;
+
+	FieldSystem->ApplyPhysicsField(true, EFieldPhysicsType::Field_ExternalClusterStrain, nullptr, RadialFalloff);
+	FieldSystem->ApplyPhysicsField(true, EFieldPhysicsType::Field_LinearVelocity, nullptr, RadialVector );
+
+	//UKismetSystemLibrary::DrawDebugSphere(this, GetActorLocation(), ExplosionRadius, 50, FLinearColor::Red, 5.0f, 0.0f);
+
+	// Debug Draw : Dessiner la force de l'explosion (une sphère représentant la force)
+	// Utilisation d'une sphère pour représenter l'effet de l'explosion à une certaine intensité
+	//UKismetSystemLibrary::DrawDebugSphere(this, GetActorLocation(), ExplosionStrength, 12, FLinearColor::Blue, 5.0f, 0.0f);
 }
 
 void AExplosiveBarrel::SetBarrelExplosionStrenght(float NewBarrelExplosionStrenght)

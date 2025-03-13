@@ -27,8 +27,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Barrel Physics")
 	class UGeometryCollectionComponent* BarrelMesh;
 
-	//UPROPERTY(EditAnywhere, Category = "Explosion")
-	//UFieldSystemComponent* FieldSystem;
+	UPROPERTY(EditAnywhere, Category = "Explosion")
+	UFieldSystemComponent* FieldSystem;
 
 	UPROPERTY(EditAnywhere, Category = "Barrel Explosion Values")
 	float BarrelExplosionStrenght;
@@ -51,15 +51,19 @@ public:
 
 	virtual void OnHitByBird() override;
 
+	UFUNCTION(CallInEditor, Category = "Explode")
 	virtual void OnHitByPig() override;
 
+	UFUNCTION(BlueprintCallable)
 	void Explode(float ExplosionStrength, float ExplosionRadius);
 
+	UFUNCTION(BlueprintCallable)
 	void SetBarrelExplosionStrenght(float NewBarrelExplosionStrenght);
 
+	UFUNCTION(BlueprintCallable)
 	float GetBarrelExplosionStrenght();
-
+	UFUNCTION(BlueprintCallable)
 	void SetBarrelExplosionRadius(float NewBarrelExplosionRadius);
-
+	UFUNCTION(BlueprintCallable)
 	float GetBarrelExplosionRadius();
 };
