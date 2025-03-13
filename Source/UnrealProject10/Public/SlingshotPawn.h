@@ -64,6 +64,8 @@ public:
     bool bIsAiming;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
     float PullStrength;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
+    float BirdImpulse;
     UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "Variables")
     FVector InitialProjectileLocation;
 
@@ -75,6 +77,11 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AnchorProjectile")
     USceneComponent* ProjectilAnchor;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AnchorProjectile")
+    TSubclassOf<AActor> ProjectilePreviewActor;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AnchorProjectile")
+    TArray<AActor*> ProjectilePreviewList;
 
     UFUNCTION(BlueprintImplementableEvent)
     void AttachCable();
