@@ -16,11 +16,10 @@ class UNREALPROJECT10_API ARedBird : public AActor, public IBirds
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ARedBird();
 
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere);
@@ -33,13 +32,11 @@ protected:
 	int BirdMaxBounceCount;
 	int BirdBounceCount;
 
-	// Composant de mesh pour l'apparence de l'oiseau (déclaré mais pas défini ici)
 	UPROPERTY(EditAnywhere, Category = "Bird Appearance")
 	class UStaticMeshComponent* BirdMesh;
 	UPROPERTY(EditAnywhere, Category = "Bird Appearance")
 	class UMaterialInterface* BirdMaterial;
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Init() override;

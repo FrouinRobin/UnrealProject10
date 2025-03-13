@@ -3,33 +3,25 @@
 
 #include "UnbreakableWall.h"
 
-// Sets default values
 AUnbreakableWall::AUnbreakableWall()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	WallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WallMesh"));
-	RootComponent = WallMesh; // Définir le mesh comme root component
+	RootComponent = WallMesh; 
 
-	////Initiation des physics components
-	WallMesh->SetSimulatePhysics(true);
-	WallMesh->SetEnableGravity(true);
 	WallMesh->SetNotifyRigidBodyCollision(true);
 }
 
-// Called when the game starts or when spawned
 void AUnbreakableWall::BeginPlay()
 {
 	Super::BeginPlay();
 	Init();
 }
 
-// Called every frame
 void AUnbreakableWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AUnbreakableWall::Init()

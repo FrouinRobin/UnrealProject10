@@ -3,11 +3,6 @@
 #include "GameFramework/PlayerController.h"
 #include "TimerManager.h"
 
-
-
-
-
-// Constructor
 ASlingshotPawn::ASlingshotPawn()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -56,7 +51,7 @@ void ASlingshotPawn::SpawnBird()
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
         FVector SpawnLocation = ProjectilAnchor->GetComponentLocation();
-        FRotator SpawnRotation = GetActorRotation();  // Set initial rotation based on the pawn's rotation
+        FRotator SpawnRotation = GetActorRotation(); 
 
         LoadedBird = GetWorld()->SpawnActor<ARedBird>(BirdList[0], SpawnLocation, SpawnRotation, SpawnParams);
         BirdList.RemoveAt(0);
@@ -67,7 +62,7 @@ void ASlingshotPawn::SpawnBird()
 
             LoadedBird->SetOwner(this);
             LoadedBird->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-            LoadedBird->SetActorRotation(SpawnRotation); // Set initial bird rotation relative to the pawn's rotation
+            LoadedBird->SetActorRotation(SpawnRotation); 
 
             UPrimitiveComponent* BirdRoot = Cast<UPrimitiveComponent>(LoadedBird->GetRootComponent());
             if (BirdRoot)
@@ -99,7 +94,6 @@ void ASlingshotPawn::Tick(float DeltaTime)
 
 }
 
-// Input Setup
 void ASlingshotPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -121,16 +115,14 @@ void ASlingshotPawn::AdjustYawRotation(const FInputActionValue& Value)
     if (LoadedBird)
     {
         float InputValue = Value.Get<float>();
-        float SensitivityX = 0.2f;  // Adjust sensitivity for yaw
+        float SensitivityX = 0.2f;  
         FRotator actorRotation = this->GetActorRotation();
-        // Calculate the amount to rotate the bird around the pawn's up axis (Z)
         FRotator CurrentRotation = LoadedBird->GetActorRotation();
 
         FVector actorLocation = ProjectilAnchor->GetComponentLocation();
         FVector CurrentLocation = LoadedBird->GetActorLocation() * LoadedBird->GetActorForwardVector();
         float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputValue * SensitivityX, actorRotation.Yaw - 45.0f, actorRotation.Yaw + 45.0f);
         float NewX = FMath::Clamp(CurrentLocation.X + InputValue * SensitivityX, actorLocation.X - 30.0f, actorLocation.X + 30.0f);
-        // Set the new rotation relative to the current pitch and roll of the bird
         LoadedBird->SetActorRelativeRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
 
     }
@@ -145,9 +137,9 @@ void ASlingshotPawn::AdjustPitchRotation(const FInputActionValue& Value)
     if (LoadedBird)
     {
         float InputValue = Value.Get<float>();
-        float SensitivityY = 0.5f;  // Adjust sensitivity for pitch
+        float SensitivityY = 0.5f;  
         FRotator actorRotation = this->GetActorRotation();
-        // Calculate the amount to rotate the bird around the pawn's right axis (X)
+        
         FRotator CurrentRotation = LoadedBird->GetActorRotation();
 
         FVector CurrentLocation = LoadedBird->GetActorLocation();
@@ -156,7 +148,6 @@ void ASlingshotPawn::AdjustPitchRotation(const FInputActionValue& Value)
         float NewPitch = FMath::Clamp(CurrentRotation.Pitch + InputValue * SensitivityY, actorRotation.Pitch - 45.0f, actorRotation.Pitch + 45.0f);
         float NewZ = FMath::Clamp(CurrentLocation.Z + InputValue * SensitivityY, actorLocation.Z - 30.0f, actorLocation.Z + 30.0f);
 
-        // Set the new rotation relative to the current yaw and roll of the bird
         LoadedBird->SetActorRotation(FRotator(NewPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
 
     }
@@ -166,7 +157,6 @@ void ASlingshotPawn::AdjustPitchRotation(const FInputActionValue& Value)
     }
 }
 
-// Start Aiming (begin charging the shot)
 void ASlingshotPawn::StartAiming()
 {
     bIsAiming = true;
@@ -181,8 +171,8 @@ void ASlingshotPawn::StartAiming()
     
     if (bIsAiming)
     {
-        if (GetPullStrength() <= 1000.f && LoadedBird) {
-            float BirdMass = FMath::Max(LoadedBird->GetBirdMass(), 0.1f); // Prevents division by zero
+        if (GetPullStrength() <= 1500.0f && LoadedBird) {
+            float BirdMass = FMath::Max(LoadedBird->GetBirdMass(), 0.1f); 
             float NewPullStrength = GetPullStrength() + (GetWorld()->GetDeltaSeconds() * 1000.f);
             BirdImpulse += (GetWorld()->GetDeltaSeconds() * 1000.f / BirdMass);
             SetPullStrength(NewPullStrength);
@@ -193,13 +183,12 @@ void ASlingshotPawn::StartAiming()
                 ProjectilAnchor->SetWorldLocation(ProjectilAnchor->GetComponentLocation() + BackwardDirection / 2.f);
         }
         FPredictProjectilePathParams PathParams;
-        PathParams.StartLocation = LoadedBird->GetActorLocation(); // Start from the bird's current location
-        PathParams.LaunchVelocity = LoadedBird->GetActorForwardVector() * BirdImpulse; // Example velocity
+        PathParams.StartLocation = LoadedBird->GetActorLocation(); 
+        PathParams.LaunchVelocity = LoadedBird->GetActorForwardVector() * BirdImpulse; 
         PathParams.bTraceWithCollision = true;
         PathParams.ProjectileRadius = 5.0f;
         PathParams.bTraceWithChannel = true;
         PathParams.TraceChannel = ECC_Visibility;
-        //PathParams.DrawDebugType = EDrawDebugTrace::ForOneFrame;
         PathParams.SimFrequency = 10.f;
         PathParams.MaxSimTime = 4.0f;
 
@@ -211,21 +200,17 @@ void ASlingshotPawn::StartAiming()
         UE_LOG(LogTemp, Warning, TEXT("Predicted %d points in the path"), PathResult.PathData.Num());
 
 
-        for (int32 i = 1; i < PathResult.PathData.Num(); ++i) // Start from index 1
+        for (int32 i = 1; i < PathResult.PathData.Num(); ++i) 
         {
             const FPredictProjectilePathPointData& Point = PathResult.PathData[i];
 
-            // Calculate scale based on position in the trajectory
-            float ScaleFactor = FMath::Clamp(1.0f - (i * 0.05f), 0.2f, 1.0f); // Shrinks progressively but not below 0.2
+            float ScaleFactor = FMath::Clamp(1.0f - (i * 0.05f), 0.2f, 1.0f); 
 
-            // Draw debug sphere with matching scale
-            //DrawDebugSphere(GetWorld(), Point.Location, 5.0f * ScaleFactor, 12, FColor::Green, false);
-
-            // Spawn the preview actor
+            
             AActor* SpawnedPreview = GetWorld()->SpawnActor<AActor>(ProjectilePreviewActor, Point.Location, FRotator::ZeroRotator);
             if (SpawnedPreview)
             {
-                SpawnedPreview->SetActorScale3D(FVector(ScaleFactor)); // Apply scale
+                SpawnedPreview->SetActorScale3D(FVector(ScaleFactor));
                 ProjectilePreviewList.Add(SpawnedPreview);
             }
         }
@@ -240,10 +225,6 @@ void ASlingshotPawn::StartAiming()
     }
 }
 
-
-
-
-// Fire the projectile
 void ASlingshotPawn::FireProjectile()
 {
     if (!bIsAiming) return;
@@ -256,7 +237,7 @@ void ASlingshotPawn::FireProjectile()
         }
     }
     bIsAiming = false;
-    FVector LaunchDirection = GetActorForwardVector(); // Adjust based on slingshot rotation
+    FVector LaunchDirection = GetActorForwardVector(); 
     LoadedBird->DetachRootComponentFromParent();
     UPrimitiveComponent* BirdRoot = Cast<UPrimitiveComponent>(LoadedBird->GetRootComponent());
     if (BirdRoot)
@@ -267,7 +248,7 @@ void ASlingshotPawn::FireProjectile()
     }
     ProjectilAnchor->SetWorldLocation(InitialProjectileLocation);
     AttachCable();
-    // Reset projectile position after 2 seconds (optional)
+    
     FTimerHandle ResetTimer;
     GetWorld()->GetTimerManager().SetTimer(ResetTimer, [this]()
         {

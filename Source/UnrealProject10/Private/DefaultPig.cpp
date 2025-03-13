@@ -3,29 +3,24 @@
 
 #include "DefaultPig.h"
 
-// Sets default values
 ADefaultPig::ADefaultPig()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	PigMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PigMesh"));
-	RootComponent = PigMesh; // Définir le mesh comme root component
+	RootComponent = PigMesh;
 
-	//Initiation des physics components
 	PigMesh->SetSimulatePhysics(true);
 	PigMesh->SetEnableGravity(true);
 	PigMesh->SetNotifyRigidBodyCollision(true);
 }
 
-// Called when the game starts or when spawned
 void ADefaultPig::BeginPlay()
 {
 	Super::BeginPlay();
 	Init();
 }
 
-// Called every frame
 void ADefaultPig::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -40,7 +35,7 @@ void ADefaultPig::Init()
 {
 	if (GetPigMass() == 0.0f)
 	{
-		SetPigMass(500.0f);
+		SetPigMass(5.0f);
 	}
 	if (GetPigHealth() == 0.0f)
 	{
@@ -48,7 +43,7 @@ void ADefaultPig::Init()
 	}
 	if (GetPigDamage() == 0.0f)
 	{
-		SetPigDamage(1.0f);
+		SetPigDamage(3.0f);
 	}
 
 	if (PigMaterial)
@@ -112,7 +107,7 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	//Gestion de l'impact avec un cochon
+	
 	if (Other && Other->Implements<UPigs>())
 	{
 		IPigs* Pig = Cast<IPigs>(Other);
@@ -123,7 +118,7 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 			UE_LOG(LogTemp, Display, TEXT("Pig : Collide with pig"));
 		}
 	}
-	//Gestion de l'impact avec un obstacle
+	
 	if (Other && Other->Implements<UObstacles>())
 	{
 		IObstacles* Obstacle = Cast<IObstacles>(Other);
@@ -133,7 +128,7 @@ void ADefaultPig::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 			UE_LOG(LogTemp, Display, TEXT("Pig : Collide with obstacle"));
 		}
 	}
-	//Gestion de l'impact avec le sol
+	
 	if (Other && Other->ActorHasTag("Ground"))
 	{
 		this->TakeDamage(GetPigDamage());

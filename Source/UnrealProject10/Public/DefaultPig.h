@@ -15,7 +15,6 @@ class UNREALPROJECT10_API ADefaultPig : public AActor, public IPigs
 {
 	GENERATED_BODY()
 protected:
-	// Composant de mesh pour l'apparence du cochon (déclaré mais pas défini ici)
 	UPROPERTY(EditAnywhere, Category = "Pig Appearance")
 	class UStaticMeshComponent* PigMesh;
 	UPROPERTY(EditAnywhere, Category = "Pig Appearance")
@@ -29,15 +28,12 @@ protected:
 	float PigHealth;
 	
 public:	
-	// Sets default values for this actor's properties
 	ADefaultPig();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Init() override;

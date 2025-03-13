@@ -15,7 +15,6 @@ class UNREALPROJECT10_API ADestructibleWall : public AActor, public IObstacles
 {
 	GENERATED_BODY()
 protected:
-	// Composant de mesh pour l'apparence du cochon (déclaré mais pas défini ici)
 	UPROPERTY(EditAnywhere, Category = "Wall Appearance")
 	class UMaterialInterface* WallMaterial;
 
@@ -26,15 +25,12 @@ protected:
 	float WallMass;
 
 public:	
-	// Sets default values for this actor's properties
 	ADestructibleWall();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every fra me
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Init() override;

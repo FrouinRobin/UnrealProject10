@@ -3,29 +3,24 @@
 
 #include "DestructibleWall.h"
 
-// Sets default values
 ADestructibleWall::ADestructibleWall()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	WallMesh = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("WallMesh"));
 	RootComponent = WallMesh;
 
-	// Active la simulation physique et la destruction
 	WallMesh->SetSimulatePhysics(true);
 	WallMesh->SetEnableGravity(true);
 	WallMesh->SetNotifyRigidBodyCollision(true);
 	WallMesh->SetCollisionProfileName("PhysicsActor");
 }
 
-// Called when the game starts or when spawned
 void ADestructibleWall::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
 void ADestructibleWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

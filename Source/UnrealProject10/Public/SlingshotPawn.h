@@ -20,15 +20,12 @@ UCLASS()
 class UNREALPROJECT10_API ASlingshotPawn : public ACharacter
 {
 	GENERATED_BODY()
-    /** Input Mapping Context */
     UPROPERTY(EditAnywhere, Category = "Input")
     UInputMappingContext* DefaultMappingContext;
 
-    /** Existing Pull Action (IA_Shoot) */
     UPROPERTY(EditAnywhere, Category = "Input")
     UInputAction* IA_Pull;
 
-    /** Existing Look Action (IA_Shoot) */
     UPROPERTY(EditAnywhere, Category = "Input")
     UInputAction* IA_LookOnX;
 
@@ -90,7 +87,6 @@ public:
 
     void SetPullStrength(float NewStrength);
 private:
-    // Projectile reference (can be set in Blueprint)
     UPROPERTY(EditAnywhere, Category = "Components")
     USceneComponent* Anchor;
 

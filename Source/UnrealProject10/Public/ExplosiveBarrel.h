@@ -5,14 +5,18 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Obstacles.h"
-
+#include "Pigs.h"
+#include "Birds.h"
+#include "DefaultPig.h"
+#include "CollisionQueryParams.h"
+#include "DrawDebugHelpers.h"
+#include "Components/PrimitiveComponent.h"
+#include "Engine/EngineTypes.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Field/FieldSystemComponent.h"
 #include "Field/FieldSystemObjects.h"
 
 #include "PhysicsEngine/RadialForceComponent.h" 
-//#include "Chaos/ChaosSolverActor.h"
-//#include "Chaos/ChaosGameplayEventDispatcher.h"
 
 #include "ExplosiveBarrel.generated.h"
 
@@ -36,18 +40,23 @@ protected:
 	float BarrelExplosionRadius;
 
 public:	
-	// Sets default values for this actor's properties
 	AExplosiveBarrel();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Init() override;
+
+	void CreateOverlapSphere(float Radius);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ADefaultPig> PigClass;
+
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
 
 	virtual void OnHitByBird() override;
 

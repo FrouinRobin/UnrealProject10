@@ -3,34 +3,29 @@
 
 #include "RedBird.h"
 
-// Sets default values
 ARedBird::ARedBird()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	BirdMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BirdMesh"));
-	RootComponent = BirdMesh; // Définir le mesh comme root component
+	RootComponent = BirdMesh; 
 
-	//Initiation des physics components
 	BirdMesh->SetSimulatePhysics(true);
 	BirdMesh->SetEnableGravity(true);
 	BirdMesh->SetNotifyRigidBodyCollision(true);
 
 	UPhysicalMaterial* PhysicsMat = NewObject<UPhysicalMaterial>();
-	PhysicsMat->Restitution = 0.8f;  // 0 = aucun rebond, 1 = rebond parfait
-	PhysicsMat->Friction = 0.5f; // Réduit le frottement pour un rebond plus naturel
+	PhysicsMat->Restitution = 0.8f; 
+	PhysicsMat->Friction = 0.5f; 
 	BirdMesh->SetPhysMaterialOverride(PhysicsMat);
 }
 
-// Called when the game starts or when spawned
 void ARedBird::BeginPlay()
 {
 	Super::BeginPlay();
 	Init();
 }
 
-// Called every frame
 void ARedBird::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -52,12 +47,11 @@ void ARedBird::Init()
 	if (GetBirdVelocity() == 0.0f)
 	{
 		BirdVelocity = 1000.0f;
-		//SetBirdVelocity(GetBirdMass(), );
 		UE_LOG(LogTemp, Display, TEXT("Using default BirdVelocity"));
 	}
 	if (GetBirdDamage() == 0.0f)
 	{
-		SetBirdDamage(1.0f);
+		SetBirdDamage(3.0f);
 		UE_LOG(LogTemp, Display, TEXT("Using default BirdDamage"));
 
 	}
@@ -74,7 +68,6 @@ void ARedBird::Init()
 	{
 		BirdMesh->SetMassOverrideInKg(NAME_None, GetBirdMass());
 		BirdMesh->BodyInstance.bOverrideMass = true;
-		//BirdMesh->SetPhysicsLinearVelocity(FVector(GetBirdVelocity(), 0.0f, GetBirdVelocity()));
 	}
 }
 
@@ -142,7 +135,7 @@ void ARedBird::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	//Gestion de l'impact avec un cochon
+	
 	if (Other && Other->Implements<UPigs>())
 	{
 		IPigs* Pig = Cast<IPigs>(Other);
@@ -151,7 +144,6 @@ void ARedBird::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 			Pig->TakeDamage(GetBirdDamage());
 		}
 	}
-	//Gestion de l'impact avec un obstacle
 	if (Other && Other->Implements<UObstacles>())
 	{
 		IObstacles* Obstacle = Cast<IObstacles>(Other);
@@ -160,7 +152,6 @@ void ARedBird::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 			Obstacle->OnHitByBird();
 		}
 	}
-	//Gestion de l'impact avec le sol
 	if (Other && Other->ActorHasTag("Ground"))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Collision avec le sol effectue"));
